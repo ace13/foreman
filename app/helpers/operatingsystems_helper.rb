@@ -10,6 +10,8 @@ module OperatingsystemsHelper
                "Ubuntu"
              when /solaris|sunos/i
                "Solaris"
+             when /osx|macos/i
+               "macOS"
              when /darwin/i
                "Darwin"
              when /centos/i

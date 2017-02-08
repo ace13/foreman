@@ -29,9 +29,19 @@ class PuppetFactParser < FactParser
       elsif os_name[/Solaris/i]
         orel.gsub!(/_u/, '.')
       end
-      major, minor = orel.split('.', 2)
-      major = major.to_s.gsub(/\D/, '')
-      minor = minor.to_s.gsub(/[^\d\.]/, '')
+
+      if os_name[/Darwin/i]
+        orel, major, minor = *facts[:os][:macosx][:version].values
+        os_name = 'macOS'
+        # os_name = facts[:system_profiler][:system_version].dup
+        # os_name = os_name[0, os_name.index(major)].squeeze(' ')
+        # os_name.strip!
+      else
+        major, minor = orel.split('.', 2)
+        major = major.to_s.gsub(/\D/, '')
+        minor = minor.to_s.gsub(/[^\d\.]/, '')
+      end
+
       args = {:name => os_name, :major => major, :minor => minor}
       os = Operatingsystem.find_or_initialize_by(args)
       os.release_name = facts[:lsbdistcodename] if facts[:lsbdistcodename] && (os_name[/debian|ubuntu/i] || os.family == 'Debian')
@@ -41,6 +51,8 @@ class PuppetFactParser < FactParser
     if os.description.blank?
       if os_name == 'SLES'
         os.description = os_name + ' ' + orel.gsub('.', ' SP')
+      elsif not facts[:os][:macosx].nil?
+        os.description = facts[:system_profiler][:system_version]
       elsif facts[:lsbdistdescription]
         family = os.deduce_family || 'Operatingsystem'
         os.description = family.constantize.shorten_description facts[:lsbdistdescription]

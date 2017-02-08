@@ -66,6 +66,7 @@ class Operatingsystem < ActiveRecord::Base
                'Solaris'   => %r{Solaris}i,
                'Freebsd'   => %r{FreeBSD}i,
                'AIX'       => %r{AIX}i,
+               'Darwin'    => %r{Darwin|macOS|MacOSX}i,
                'Junos'     => %r{Junos}i,
                'NXOS'      => %r{NX-OS}i,
                'Xenserver' => %r{XenServer}i }
